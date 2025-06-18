@@ -5,9 +5,8 @@ function App() {
   const [workers, setWorkers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [workersPerPage, setWorkersPerPage] = useState(5); // Dynamic selector
+  const [workersPerPage, setWorkersPerPage] = useState(5);
 
   useEffect(() => {
     setLoading(true);
@@ -26,7 +25,6 @@ function App() {
       });
   }, []);
 
-  // Pagination logic
   const totalPages = Math.ceil(workers.length / workersPerPage);
   const indexOfLastWorker = currentPage * workersPerPage;
   const indexOfFirstWorker = indexOfLastWorker - workersPerPage;
@@ -42,75 +40,116 @@ function App() {
 
   const handleSelectChange = (e) => {
     setWorkersPerPage(Number(e.target.value));
-    setCurrentPage(1); // Reset to first page
+    setCurrentPage(1);
   };
 
   return (
-    <div>
-      <h1>Workers Table</h1>
+    <div className="min-h-screen bg-[#fcfcf8] font-sans p-6">
+      <h1 className="text-3xl font-bold text-center mb-6 text-[#0d151c]">
+        Workers Table
+      </h1>
 
       {loading ? (
-        <div className="loader-container">
-          <div className="crazy-loader"></div>
-          <p>Loading data from my own API, it will be many seconds... 🐌</p>
+        <div className="flex flex-col items-center justify-center mt-20 space-y-4">
+          <div className="w-16 h-16 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-center text-gray-600 font-medium">
+            Loading data from my own API, it will take a few seconds... 🐌
+          </p>
         </div>
       ) : (
         <>
-          <table border="1" cellPadding="10">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Workers</th>
-                <th>Days Worked</th>
-                <th>Salary</th>
-                <th>Phone</th>
-                <th>Position</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentWorkers.map((worker) => (
-                <tr key={worker.ID}>
-                  <td>{worker.ID}</td>
-                  <td>{worker.Workers}</td>
-                  <td>{worker["Days Worked"]}</td>
-                  <td>{worker.Salary}</td>
-                  <td>{worker.Phone}</td>
-                  <td>{worker.Position}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="flex justify-center">
+            <div className="w-full max-w-6xl bg-white rounded-xl shadow p-6">
+              <div className="mb-4">
+                <p className="text-2xl font-semibold text-[#0d151c]">
+                  Data Table with Lazy Loading
+                </p>
+              </div>
 
-          <div style={{ margin: "10px" }}>
-            <label>
-              Show per page:{" "}
-              <select value={workersPerPage} onChange={handleSelectChange}>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="15">15</option>
-                <option value="20">20</option>
-                <option value="25">25</option>
-                <option value="30">30</option>
-                <option value="40">40</option>
-                <option value="50">50</option>
-              </select>
-            </label>
-          </div>
+              <div className="overflow-x-auto">
+                <table className="min-w-full table-auto text-left border border-gray-200 rounded-lg">
+                  <thead className="bg-slate-50">
+                    <tr>
+                      {["ID", "Workers", "Days Worked", "Salary", "Phone", "Position"].map((header) => (
+                        <th
+                          key={header}
+                          className="px-4 py-3 text-sm font-semibold text-[#0d151c] border-b border-gray-200"
+                        >
+                          {header}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentWorkers.map((worker) => (
+                      <tr key={worker.ID} className="hover:bg-gray-50">
+                        <td className="px-4 py-2">{worker.ID}</td>
+                        <td className="px-4 py-2">{worker.Workers}</td>
+                        <td className="px-4 py-2">{worker["Days Worked"]}</td>
+                        <td className="px-4 py-2">{worker.Salary}</td>
+                        <td className="px-4 py-2">{worker.Phone}</td>
+                        <td className="px-4 py-2">{worker.Position}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
 
-          <div style={{ marginTop: "20px" }}>
-            <button onClick={handlePrev} disabled={currentPage === 1}>
-              ◀ Prev
-            </button>
-            <span style={{ margin: "0 15px" }}>
-              Page {currentPage} of {totalPages}
-            </span>
-            <button onClick={handleNext} disabled={currentPage === totalPages}>
-              Next ▶
-            </button>
+              <div className="mt-6 flex flex-col md:flex-row justify-between items-center gap-4 bg-gray-100 p-4 rounded-lg">
+                <label className="flex items-center text-sm text-gray-700">
+                  Show per page:{" "}
+                  <select
+                    className="ml-2 border border-gray-300 rounded p-1"
+                    value={workersPerPage}
+                    onChange={handleSelectChange}
+                  >
+                    {[1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 40, 50].map((num) => (
+                      <option key={num} value={num}>
+                        {num}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={handlePrev}
+                    disabled={currentPage === 1}
+                    className="flex items-center gap-1 px-4 py-2 rounded bg-grey-500 disabled:opacity-50 hover:bg-gray-300 transition"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+
+                  <span className="text-sm font-medium">
+                    Page {currentPage} of {totalPages}
+                  </span>
+
+                  <button
+                    onClick={handleNext}
+                    disabled={currentPage === totalPages}
+                    className="flex items-center gap-1 px-4 py-2 rounded bg-grey-500 disabled:opacity-50 hover:bg-gray-300 transition"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </>
       )}
